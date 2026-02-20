@@ -1,0 +1,89 @@
+# IncidentIQ - AI Incident Resolution Assistant
+# Zero vendor lock-in, enterprise-ready incident pattern matching
+
+[project]
+name = "incidentiq"
+version = "0.1.0"
+description = "AI-powered incident resolution assistant with semantic pattern matching"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "IncidentIQ Team" }]
+
+dependencies = [
+    # === Core Framework ===
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    
+    # === LLM - Vendor Agnostic (NO LOCK-IN) ===
+    # LiteLLM supports 100+ providers: OpenAI, Azure, Claude, Ollama, custom endpoints
+    "litellm>=1.30.0",
+    
+    # === Vector Database ===
+    "qdrant-client>=1.7.0",
+    
+    # === Database ===
+    "asyncpg>=0.29.0",           # Async PostgreSQL
+    "sqlalchemy[asyncio]>=2.0.0",
+    
+    # === Chat Platform SDKs ===
+    "slack-bolt>=1.18.0",         # Slack Bot
+    "aiohttp>=3.9.0",             # Async HTTP for webhooks
+    
+    # === Caching & Queue ===
+    "redis>=5.0.0",
+    "hiredis>=2.3.0",             # Redis performance boost
+    
+    # === Utilities ===
+    "httpx>=0.26.0",              # Async HTTP client
+    "tenacity>=8.2.0",            # Retry logic
+    "structlog>=24.1.0",          # Structured logging
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+]
+
+# MS Teams Bot dependencies
+teams = [
+    "botbuilder-core>=4.15.0",
+    "botbuilder-schema>=4.15.0",
+    "botbuilder-integration-aiohttp>=4.15.0",
+]
+
+# All bot platforms (Slack + Teams + future)
+bots = [
+    "incidentiq[dev,teams]",
+]
+
+# Complete (all optional dependencies)
+all = [
+    "incidentiq[dev,teams]",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
